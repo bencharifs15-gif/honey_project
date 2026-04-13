@@ -12,3 +12,4 @@ torch
 torchvision
 cryptography
 pandas
+itsdangerous
