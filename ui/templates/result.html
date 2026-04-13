@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>HoneyCheck - Result</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">HC</div>
+      <div>
+        <h1>HoneyCheck</h1>
+        <p>Prediction result</p>
+      </div>
+    </div>
+    <div class="nav">
+      <a href="/ui">Analyze</a>
+      <a href="/ui/history">History</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
+        <div>
+          <h2 style="margin:0">Result</h2>
+          <p style="margin:6px 0 0;color:var(--muted)">Record ID: {{ id }}</p>
+        </div>
+
+        {% if "Pure" in result %}
+          <div class="badge ok">✅ {{ result }}</div>
+        {% elif "Adulterated" in result %}
+          <div class="badge bad">⚠️ {{ result }}</div>
+        {% else %}
+          <div class="badge">❔ {{ result }}</div>
+        {% endif %}
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+        <span class="chip"><b>Confidence:</b> {{ confidence }}</span>
+        <span class="chip"><b>Score:</b> {{ score }}</span>
+        <span class="chip"><b>Summary:</b> {{ reason }}</span>
+      </div>
+
+      <div style="margin-top:12px;color:var(--muted)">
+        <b>Input values:</b>
+        density={{ density }}, pH={{ ph }}, flow_time={{ flow_time }}
+      </div>
+
+      {% if image_url %}
+        <img class="preview" src="{{ image_url }}" alt="Uploaded sample">
+      {% endif %}
+
+      {% if reasons %}
+        <div style="margin-top:12px">
+          <b>Why?</b>
+          <ul style="margin:8px 0 0;color:var(--muted)">
+            {% for r in reasons %}
+              <li>{{ r }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn" href="/ui">Analyze another</a>
+        <a class="btn secondary" href="/ui/details/{{ id }}">Open details</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

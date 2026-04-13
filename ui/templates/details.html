@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>HoneyCheck - Details</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">HC</div>
+      <div>
+        <h1>HoneyCheck</h1>
+        <p>Record details</p>
+      </div>
+    </div>
+    <div class="nav">
+      <a href="/ui">Analyze</a>
+      <a href="/ui/history">History</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2 style="margin:0 0 10px">Details #{{ row.id }}</h2>
+
+      <div class="chips">
+        <span class="chip"><b>Result:</b> {{ row.result }}</span>
+        <span class="chip"><b>Confidence:</b> {{ row.confidence }}</span>
+        <span class="chip"><b>Score:</b> {{ row.score if row.score is not none else "-" }}</span>
+        <span class="chip"><b>Reason:</b> {{ row.reason if row.reason is not none else "-" }}</span>
+      </div>
+
+      <div class="muted" style="margin-top:10px">
+        <b>Values:</b> density={{ row.density }}, pH={{ row.ph }}, flow_time={{ row.flow_time }}<br>
+        <b>Created:</b> {{ row.created_at }}
+      </div>
+
+      {% if image_url %}
+        <img class="preview" src="{{ image_url }}" alt="Sample image">
+      {% endif %}
+
+      {% if score_pct is not none %}
+      <div style="margin-top:14px">
+        <b>Score bar</b>
+        <div class="bar">
+          <div class="barFill" style="width:{{ score_pct }}%"></div>
+        </div>
+        <div class="muted small">-3 (adulterated) → +3 (pure)</div>
+      </div>
+      {% endif %}
+
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn" href="/ui">Analyze another</a>
+        <a class="btn alt" href="/ui/history">Back to history</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

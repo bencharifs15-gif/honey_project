@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>HoneyCheck - Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <div class="logo">HC</div>
+        <div class="title">
+          <h1>HoneyCheck</h1>
+          <p>Dashboard</p>
+        </div>
+      </div>
+      <div class="nav">
+        <a href="/ui">Analyze</a>
+        <a href="/ui/history">History</a>
+        <a href="/ui/dashboard">Dashboard</a>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2 style="margin:0 0 10px">Quick stats</h2>
+
+        <div class="row">
+          <div class="badge ok">Total: {{ stats.total }}</div>
+          <div class="badge ok">Pure: {{ stats.pure }} ({{ stats.pure_pct }}%)</div>
+          <div class="badge bad">Adulterated: {{ stats.adulterated }} ({{ stats.adulterated_pct }}%)</div>
+          <div class="badge bad">Uncertain: {{ stats.uncertain }} ({{ stats.uncertain_pct }}%)</div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3 style="margin:0 0 10px">Simple distribution</h3>
+
+        <!-- Simple bars (no JS libs) -->
+        <div class="small muted">Pure</div>
+        <div style="background:#0c1428;border:1px solid var(--border);border-radius:12px;overflow:hidden">
+          <div style="height:16px;width:{{ stats.pure_pct }}%;background:var(--ok)"></div>
+        </div>
+
+        <div class="small muted" style="margin-top:10px">Adulterated</div>
+        <div style="background:#0c1428;border:1px solid var(--border);border-radius:12px;overflow:hidden">
+          <div style="height:16px;width:{{ stats.adulterated_pct }}%;background:var(--danger)"></div>
+        </div>
+
+        <div class="small muted" style="margin-top:10px">Uncertain</div>
+        <div style="background:#0c1428;border:1px solid var(--border);border-radius:12px;overflow:hidden">
+          <div style="height:16px;width:{{ stats.uncertain_pct }}%;background:#fbbf24"></div>
+        </div>
+
+        <div class="footer">This dashboard is useful for startup demos and supervisor presentations.</div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin:0 0 10px">Last 10 records</h2>
+        {% if last_rows and last_rows|length > 0 %}
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Result</th>
+                <th>Conf</th>
+                <th>Reasons</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in last_rows %}
+              <tr>
+                <td>{{ r.id }}</td>
+                <td>{{ r.result }}</td>
+                <td>{{ "%.3f"|format(r.confidence) }}</td>
+                <td class="small">{{ r.reasons }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="muted">No records yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

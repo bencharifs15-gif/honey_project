@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Spectral Analysis</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="logo">HC</div>
+    <div>
+      <h1>Spectral Analysis</h1>
+    </div>
+  </div>
+
+  <div class="nav">
+    <a href="/">Home</a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="card">
+
+    <h2>Spectral Analysis</h2>
+
+<textarea id="data" rows="6"></textarea>
+
+<br><br>
+
+<input type="file" id="file">
+
+<br><br>
+
+<button onclick="send()">Analyze</button>
+<button onclick="demo()">Demo</button>
+<button onclick="upload()">Upload CSV</button>
+
+<pre id="result"></pre>
+
+<script>
+function demo(){
+  let arr = [];
+  for(let i=0;i<128;i++){
+    arr.push((Math.random()*1).toFixed(3));
+  }
+  document.getElementById("data").value = arr.join(",");
+}
+
+async function send(){
+  let raw = document.getElementById("data").value;
+  let arr = raw.split(",").map(Number);
+
+  let res = await fetch("/hyperspectral/predict", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({data: arr})
+  });
+
+  let json = await res.json();
+  document.getElementById("result").innerText =
+    JSON.stringify(json, null, 2);
+}
+
+async function upload(){
+  let file = document.getElementById("file").files[0];
+
+  let formData = new FormData();
+  formData.append("file", file);
+
+  let res = await fetch("/hyperspectral/upload_csv", {
+    method: "POST",
+    body: formData
+  });
+
+  let json = await res.json();
+  document.getElementById("result").innerText =
+    JSON.stringify(json, null, 2);
+}
+</script>

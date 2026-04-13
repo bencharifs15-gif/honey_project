@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>HoneyCheck - History</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">HC</div>
+      <div>
+        <h1>HoneyCheck</h1>
+        <p>User history</p>
+      </div>
+    </div>
+    <div class="nav">
+      <a href="/ui">Analyze</a>
+      <a href="/ui/history">History</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div class="rowBetween">
+        <div>
+          <h2 style="margin:0">History</h2>
+          <p class="muted small" style="margin:6px 0 0">Total: {{ total }}</p>
+        </div>
+        <a class="btn ghost" href="/ui/history">Reset</a>
+      </div>
+
+      <form method="get" action="/ui/history" class="filters" id="filtersForm">
+        <input type="hidden" name="page" value="1">
+        <div class="autocomplete">
+          <label class="label">Search in result (q)</label>
+          <input id="q" type="text" name="q" value="{{ q }}" placeholder="pure / adulterated / نقي / مغشوش">
+          <div id="sug" class="sug" style="display:none;"></div>
+        </div>
+
+        <div>
+          <label class="label">Result type</label>
+          <select name="result_type">
+            <option value="all" {% if result_type=="all" %}selected{% endif %}>All</option>
+            <option value="Pure" {% if result_type=="Pure" %}selected{% endif %}>Pure</option>
+            <option value="Adulterated" {% if result_type=="Adulterated" %}selected{% endif %}>Adulterated</option>
+            <option value="Uncertain" {% if result_type=="Uncertain" %}selected{% endif %}>Uncertain</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="label">Min confidence</label>
+          <input type="number" name="min_conf" step="0.01" value="{{ min_conf }}" placeholder="0.70">
+        </div>
+
+        <div>
+          <button class="btn" type="submit">Filter</button>
+        </div>
+      </form>
+
+      {% if rows and rows|length>0 %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Image</th>
+            <th>Result</th>
+            <th>Conf</th>
+            <th>Score</th>
+            <th>Reason</th>
+            <th>Values</th>
+            <th>Time</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+          <tr>
+            <td>{{ r.id }}</td>
+            <td>
+              {% if r.image_path %}
+              <a href="/uploads/{{ r.image_path }}" target="_blank">
+                <img class="thumb" src="/uploads/{{ r.image_path }}">
+              </a>
+              {% else %}-{% endif %}
+            </td>
+            <td><b>{{ r.result }}</b></td>
+            <td>{{ r.confidence }}</td>
+            <td>{{ r.score if r.score is not none else "-" }}</td>
+            <td class="muted">{{ r.reason if r.reason is not none else "-" }}</td>
+            <td class="muted">d={{ r.density }}, pH={{ r.ph }}, f={{ r.flow_time }}</td>
+            <td class="muted">{{ r.created_at }}</td>
+            <td><a href="/ui/details/{{ r.id }}">Details</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="pager">
+        {% if page > 1 %}
+          <a class="btn ghost" href="/ui/history?q={{ q }}&result_type={{ result_type }}&min_conf={{ min_conf }}&page={{ page-1 }}">Prev</a>
+        {% else %}
+          <span></span>
+        {% endif %}
+
+        <div class="muted small">Page {{ page }} / {{ pages }}</div>
+
+        {% if page < pages %}
+          <a class="btn ghost" href="/ui/history?q={{ q }}&result_type={{ result_type }}&min_conf={{ min_conf }}&page={{ page+1 }}">Next</a>
+        {% else %}
+          <span></span>
+        {% endif %}
+      </div>
+
+      {% else %}
+        <p class="muted">No records match this filter.</p>
+      {% endif %}
+    </div>
+  </div>
+
+<script>
+const q = document.getElementById("q");
+const sug = document.getElementById("sug");
+
+let tmr = null;
+q.addEventListener("input", () => {
+  clearTimeout(tmr);
+  tmr = setTimeout(async () => {
+    const val = q.value.trim();
+    const res = await fetch("/ui/suggestions?q=" + encodeURIComponent(val));
+    const data = await res.json();
+    const items = data.suggestions || [];
+    if (!items.length) { sug.style.display="none"; return; }
+    sug.innerHTML = items.map(x => `<div class="sugItem">${x}</div>`).join("");
+    sug.style.display = "block";
+
+    document.querySelectorAll(".sugItem").forEach(el => {
+      el.addEventListener("click", () => {
+        q.value = el.textContent;
+        sug.style.display = "none";
+      });
+    });
+  }, 200);
+});
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".autocomplete")) sug.style.display="none";
+});
+</script>
+
+</body>
+</html>

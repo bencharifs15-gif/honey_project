@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>HoneyCheck - Analyze</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">HC</div>
+      <div>
+        <h1>HoneyCheck</h1>
+        <p>User analysis</p>
+      </div>
+    </div>
+    <div class="nav">
+      <a href="/ui">Analyze</a>
+      <a href="/ui/history">History</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2 style="margin:0 0 8px">Analyze a new sample</h2>
+      <p class="muted" style="margin:0 0 16px">Upload a honey photo + enter density, pH and flow time.</p>
+
+      <form action="/ui/analyze" method="post" enctype="multipart/form-data">
+        <div class="grid2">
+          <div>
+            <label class="label">Honey photo (jpg/png)</label>
+            <input type="file" name="image" accept="image/*" required>
+          </div>
+          <div>
+            <label class="label">Density (g/ml)</label>
+            <input type="number" name="density" step="0.01" required placeholder="1.41">
+          </div>
+          <div>
+            <label class="label">pH</label>
+            <input type="number" name="ph" step="0.1" required placeholder="3.8">
+          </div>
+          <div>
+            <label class="label">Flow time (seconds)</label>
+            <input type="number" name="flow_time" step="1" required placeholder="14">
+          </div>
+        </div>
+
+        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="btn" type="submit">Analyze</button>
+          <span class="chip">Tip: same lighting + plain background</span>
+        </div>
+      </form>
+
+      <hr class="sep">
+
+      <h3 style="margin:0 0 10px">Demo mode (from demo_cases.csv)</h3>
+      <p class="muted" style="margin:0 0 12px">Click a case to insert it automatically (no upload needed).</p>
+
+      {% if demo_cases and demo_cases|length > 0 %}
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          {% for c in demo_cases %}
+            <form action="/ui/demo_run" method="post">
+              <input type="hidden" name="case_id" value="{{ c.case_id }}">
+              <button class="btn alt" type="submit">
+                Case {{ c.case_id }} • {{ c.label }}
+              </button>
+            </form>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="muted">
+          demo_cases.csv not found or empty. Put it in: <b>data/demo_samples/demo_cases.csv</b>
+        </div>
+      {% endif %}
+
+      <div class="footer-note">
+        <span class="muted">Admin panel is not visible here. Access: /admin/login</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

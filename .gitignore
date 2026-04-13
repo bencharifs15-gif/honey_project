@@ -1,0 +1,31 @@
+# Virtual environments
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Database
+*.db
+*.sqlite3
+
+# Uploads (صور المستخدم)
+uploads/
+
+# Environment variables
+.env
+
+# Models (إذا كانت كبيرة - اختياري)
+models/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Logs
+*.log

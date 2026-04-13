@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin - Details</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="topbar admin">
+    <div class="brand">
+      <div class="logo">AD</div>
+      <div>
+        <h1>Record Details</h1>
+        <p>Admin view</p>
+      </div>
+    </div>
+    <div class="nav">
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/admin/logout">Logout</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2 style="margin:0 0 10px">#{{ row.id }}</h2>
+
+      <div class="chips">
+        <span class="chip"><b>Result:</b> {{ row.result }}</span>
+        <span class="chip"><b>Confidence:</b> {{ row.confidence }}</span>
+        <span class="chip"><b>Score:</b> {{ row.score if row.score is not none else "-" }}</span>
+        <span class="chip"><b>Reason:</b> {{ row.reason if row.reason is not none else "-" }}</span>
+      </div>
+
+      <div class="muted" style="margin-top:10px">
+        <b>Values:</b> d={{ row.density }}, pH={{ row.ph }}, f={{ row.flow_time }}<br>
+        <b>Created:</b> {{ row.created_at }}
+      </div>
+
+      {% if image_url %}
+        <img class="preview" src="{{ image_url }}">
+      {% endif %}
+
+      {% if score_pct is not none %}
+      <div style="margin-top:14px">
+        <b>Score bar</b>
+        <div class="bar">
+          <div class="barFill" style="width:{{ score_pct }}%"></div>
+        </div>
+        <div class="muted small">-3 → +3</div>
+      </div>
+      {% endif %}
+
+      <div style="margin-top:14px">
+        <a class="btn alt" href="/admin/dashboard">Back to dashboard</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

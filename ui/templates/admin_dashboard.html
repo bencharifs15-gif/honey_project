@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="topbar admin">
+    <div class="brand">
+      <div class="logo">AD</div>
+      <div>
+        <h1>Dashboard</h1>
+        <p>System overview</p>
+      </div>
+    </div>
+    <div class="nav">
+      <a href="/admin/dashboard">Dashboard</a>
+      <a href="/admin/history">History</a>
+      <a href="/docs" target="_blank">API Docs</a>
+      <a href="/admin/logout">Logout</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="cards">
+      <div class="stat">
+        <div class="muted small">Total records</div>
+        <div class="big">{{ stats.total }}</div>
+      </div>
+      <div class="stat">
+        <div class="muted small">Pure</div>
+        <div class="big">{{ stats.pure }} <span class="muted small">({{ stats.pure_pct }}%)</span></div>
+      </div>
+      <div class="stat">
+        <div class="muted small">Adulterated</div>
+        <div class="big">{{ stats.adulter }} <span class="muted small">({{ stats.adulter_pct }}%)</span></div>
+      </div>
+      <div class="stat">
+        <div class="muted small">Avg confidence</div>
+        <div class="big">{{ stats.avg_conf }}</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h2 style="margin:0 0 12px">Distribution</h2>
+
+      <div class="dist">
+        <div class="distRow">
+          <div class="distLabel">Pure</div>
+          <div class="distBar"><div class="distFill ok" style="width:{{ stats.pure_pct }}%"></div></div>
+          <div class="distVal">{{ stats.pure_pct }}%</div>
+        </div>
+        <div class="distRow">
+          <div class="distLabel">Adulterated</div>
+          <div class="distBar"><div class="distFill bad" style="width:{{ stats.adulter_pct }}%"></div></div>
+          <div class="distVal">{{ stats.adulter_pct }}%</div>
+        </div>
+        <div class="distRow">
+          <div class="distLabel">Uncertain</div>
+          <div class="distBar"><div class="distFill warn" style="width:{{ stats.uncertain_pct }}%"></div></div>
+          <div class="distVal">{{ stats.uncertain_pct }}%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h2 style="margin:0 0 10px">Last 10 records</h2>
+      {% if last10 and last10|length>0 %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Result</th><th>Conf</th><th>Score</th><th>Reason</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in last10 %}
+          <tr>
+            <td>{{ r.id }}</td>
+            <td><b>{{ r.result }}</b></td>
+            <td>{{ r.confidence }}</td>
+            <td>{{ r.score if r.score is not none else "-" }}</td>
+            <td class="muted">{{ r.reason if r.reason is not none else "-" }}</td>
+            <td><a href="/admin/details/{{ r.id }}">Details</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p class="muted">No records yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>
